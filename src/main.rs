@@ -1,6 +1,4 @@
-use std::result;
-
-use clap::{Parser, builder::Str};
+use clap::Parser;
 
 /// Search for a pattern in a file and display the lines that contain it.
 #[derive(Parser)]
@@ -20,10 +18,11 @@ fn main() {
     let result_seconds = evaluate_postfix(&symbols_postfix);
     let result = seconds_to_time(result_seconds);
 
-    println!("symbols infix: {:?}", symbols_infix);
-    println!("symbols postfix: {:?}", symbols_postfix);
-    println!("Result: {}", result_seconds);
-    println!("Real result: {}", result);
+    // println!("symbols infix: {:?}", symbols_infix);
+    // println!("symbols postfix: {:?}", symbols_postfix);
+    // println!("Result: {}", result_seconds);
+    // println!("Real result: {}", result);
+    println!("Result: {}", result)
 }
 
 fn evaluate_postfix(symbols_postfix: &[String]) -> u32 {
