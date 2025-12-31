@@ -5,15 +5,22 @@ use clap::Parser;
 struct Cli {
     /// The expression of time to calculate
     time_expression: Option<String>,
+    #[clap(short, long, default_value_t = false)]
+    /// values given are minutes, not seconds
+    minutes: bool,
 }
 // TODO: Perform calculation from file input
 
 fn main() {
     let args = Cli::parse();
     let expression = args.time_expression.as_deref().unwrap_or("");
+    let minutes_flag = args.minutes;
     println!("expression: {}", expression);
 
-    let symbols_infix = parse_symbols(expression);
+    let mut symbols_infix = parse_symbols(expression);
+    if minutes_flag {
+        symbols_infix = inflate_values(symbols_infix, 60);
+    }
     let symbols_postfix = to_postfix(&symbols_infix);
     let result_seconds = evaluate_postfix(&symbols_postfix);
     let result = seconds_to_time(result_seconds);
@@ -23,6 +30,21 @@ fn main() {
     // println!("Result: {}", result_seconds);
     // println!("Real result: {}", result);
     println!("Result: {}", result)
+}
+
+fn inflate_values(symbols: Vec<String>, factor: u32) -> Vec<String> {
+    let mut inflated_symbols: Vec<String> = Vec::new();
+    for s in symbols {
+        let number = s.parse::<u32>();
+        if number.is_ok() {
+            let new_val = number.unwrap() * factor;
+            inflated_symbols.push(new_val.to_string());
+        } else {
+            inflated_symbols.push(s);
+        }
+    }
+
+    inflated_symbols
 }
 
 fn evaluate_postfix(symbols_postfix: &[String]) -> u32 {
